@@ -22,9 +22,9 @@ function secondsToMinutesSeconds(seconds) {
 async function getSongs(folder) {
     currFolder = folder;
     // Fetch Data from URL: await pauses execution until the fetch promise resolves.
-    const a = await fetch(`http://192.168.18.134:3000/${folder}/`)
+    let a = await fetch(`/${folder}/`)
     // Converts the HTTP response into a text format using .text().
-    const response = await a.text()
+    let response = await a.text()
     console.log(response);
 
     let div = document.createElement('div')
@@ -32,7 +32,7 @@ async function getSongs(folder) {
 
     let as = div.getElementsByTagName('a')
 
-    let songs = [];
+    songs = [];
 
     for (let index = 0; index < as.length; index++) {
         const element = as[index];
@@ -42,29 +42,10 @@ async function getSongs(folder) {
 
     }
 
-    return songs;
 
-}
-
-const playMusic = (track, pause = false) => {
-    // let audio = new Audio("/songs/" + track)
-    currentSong.src =`/${currFolder}/` + track;
-    if (!pause) {
-        currentSong.play();
-        play.src = "pause.svg"
-    }
-    document.querySelector(".songinfo").innerHTML = decodeURI(track)
-    document.querySelector(".songtime").innerHTML = "00:00 / 00:00"
-}
-
-
-
-async function main() {
-    // get the list of all the song 
-    songs = await getSongs("songs/ncs");
-    playMusic(songs[0], true)
-    // show all the songs in the playlist
-    let songUL = document.querySelector('.songlist').getElementsByTagName('ul')[0]
+// show all the songs in the playlist
+    let songUL = document.querySelector('.songlist').getElementsByTagName('ul')[0];
+    songUL.innerHTML = "";
     for (const song of songs) {
         songUL.innerHTML = songUL.innerHTML + ` <li>
         
@@ -86,6 +67,53 @@ async function main() {
             playMusic(e.querySelector(".info").firstElementChild.innerHTML.trim())
         })
     })
+
+    
+
+}
+
+
+
+
+const playMusic = (track, pause = false) => {
+    // let audio = new Audio("/songs/" + track)
+    currentSong.src =`/${currFolder}/` + track;
+    if (!pause) {
+        currentSong.play();
+        play.src = "pause.svg"
+    }
+    document.querySelector(".songinfo").innerHTML = decodeURI(track)
+    document.querySelector(".songtime").innerHTML = "00:00 / 00:00"
+}
+
+
+async function displayAlbums() {
+     let a = await fetch(`/songs/`)
+    let response = await a.text()
+    let div = document.createElement('div')
+    div.innerHTML = response;
+    let anchors = div.getElementsByTagName("a")
+    Array.from(anchors).forEach(e=>{
+        if(e.href.includes("/songs")){
+            console.log(e.href.split("/").slice(-2)[0]);
+
+        }
+            
+    })
+}
+
+
+// Main function 
+async function main() {
+    // get the list of all the song 
+    await getSongs("songs/ncs");
+    playMusic(songs[0], true)
+
+    
+// display all Albums on the page
+displayAlbums()
+
+
 
 
     // Attach an Event listner to each play previous next button 
@@ -152,6 +180,18 @@ async function main() {
         console.log("setting volume to ",e.target.value  ,"/100");
         currentSong.volume= parseInt(e.target.value)/100;
         
+    })
+
+    //etc  collection daita hain aur is par for each nahi chalta that is we use array form 
+    
+     // Load the playlist whenever card is clicked
+    Array.from(document.getElementsByClassName("card")).forEach(e => { 
+        e.addEventListener("click", async item => {
+
+            songs = await getSongs(`songs/${item.currentTarget.dataset.folder}`)  
+           
+
+        })
     })
 
 
