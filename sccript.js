@@ -1,6 +1,7 @@
 
 let currentSong = new Audio();
 let songs;
+let currFolder;
 
 function secondsToMinutesSeconds(seconds) {
     if (isNaN(seconds) || seconds < 0) {
@@ -18,9 +19,10 @@ function secondsToMinutesSeconds(seconds) {
 
 
 
-async function getSongs() {
+async function getSongs(folder) {
+    currFolder = folder;
     // Fetch Data from URL: await pauses execution until the fetch promise resolves.
-    const a = await fetch("http://192.168.18.134:3000/songs/")
+    const a = await fetch(`http://192.168.18.134:3000/${folder}/`)
     // Converts the HTTP response into a text format using .text().
     const response = await a.text()
     console.log(response);
@@ -35,7 +37,7 @@ async function getSongs() {
     for (let index = 0; index < as.length; index++) {
         const element = as[index];
         if (element.href.endsWith(".mp3")) {
-            songs.push(element.href.split("/songs/")[1])
+            songs.push(element.href.split(`/${folder}/`)[1])
         }
 
     }
@@ -46,7 +48,7 @@ async function getSongs() {
 
 const playMusic = (track, pause = false) => {
     // let audio = new Audio("/songs/" + track)
-    currentSong.src = "/songs/" + track;
+    currentSong.src =`/${currFolder}/` + track;
     if (!pause) {
         currentSong.play();
         play.src = "pause.svg"
@@ -59,12 +61,8 @@ const playMusic = (track, pause = false) => {
 
 async function main() {
     // get the list of all the song 
-    songs = await getSongs();
+    songs = await getSongs("songs/ncs");
     playMusic(songs[0], true)
-
-
-    console.log(songs);
-
     // show all the songs in the playlist
     let songUL = document.querySelector('.songlist').getElementsByTagName('ul')[0]
     for (const song of songs) {
@@ -151,8 +149,8 @@ async function main() {
 
     // add Ebenetlistner for the volume\
     document.querySelector(".range").addEventListener("change" ,(e)=>{
-
-        console.log(e);
+        console.log("setting volume to ",e.target.value  ,"/100");
+        currentSong.volume= parseInt(e.target.value)/100;
         
     })
 
