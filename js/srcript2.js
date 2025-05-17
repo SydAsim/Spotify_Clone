@@ -45,14 +45,14 @@ async function getSongs(folder) {
     for (const song of songs) {
         songUL.innerHTML += `
             <li>
-                <img class="invert" src="music.svg" alt="">
+                <img class="invert" src="img/music.svg" alt="">
                 <div class="info">
                     <div>${song.replaceAll("%20", " ")}</div>
                     <div>Asim</div>
                 </div>
                 <div class="playnow">
                     <span>Play now</span>
-                    <img class="invert" src="play.svg" alt="">
+                    <img class="invert" src="img/play.svg" alt="">
                 </div>
             </li>`;
     }
@@ -70,7 +70,7 @@ const playMusic = (track, pause = false) => {
     currentSong.src = `/${currFolder}/` + track;
     if (!pause) {
         currentSong.play();
-        play.src = "pause.svg";
+        play.src = "img/pause.svg";
     }
     document.querySelector(".songinfo").innerHTML = decodeURI(track);
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
@@ -130,10 +130,10 @@ async function main() {
     play.addEventListener("click", () => {
         if (currentSong.paused) {
             currentSong.play();
-            play.src = "pause.svg";
+            play.src = "img/pause.svg";
         } else {
             currentSong.pause();
-            play.src = "play.svg";
+            play.src = "img/play.svg";
         }
     });
 
@@ -173,7 +173,10 @@ async function main() {
 
     document.querySelector(".range").addEventListener("change", (e) => {
         currentSong.volume = parseInt(e.target.value) / 100;
-    });
+        if (currentSong.volume>0){
+            document.querySelector(".volume>img").src =  document.querySelector(".volume>img").src.replace("mute.svg" , "volume.svg")
+        }
+    })
 
 
     // add event listenr for muting the volume
