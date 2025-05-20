@@ -78,7 +78,7 @@ const playMusic = (track, pause = false) => {
 
 async function displayAlbums() {
     console.log("displaying albums");
-    let a = await fetch(`http://192.168.18.134:3000/songs/`);
+    let a = await fetch(`/songs/`);
     let response = await a.text();
     let div = document.createElement("div");
     div.innerHTML = response;
@@ -90,7 +90,7 @@ async function displayAlbums() {
         const e = array[index];
         if (e.href.includes("/songs")) {
             let folder = e.href.split("/").slice(-2)[0];
-            let metadataResponse = await fetch(`http://192.168.18.134:3000/songs/${folder}/info.json`);
+            let metadataResponse = await fetch(`/${folder}/info.json`);
             let metadata = await metadataResponse.json();
             console.log(metadata);
 
