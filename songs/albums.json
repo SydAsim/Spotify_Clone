@@ -1,0 +1,66 @@
+{
+  "cs": {
+    "title": "Sleep Nasheeds",
+    "cover": "songs/cs/cover.jpg",
+    "description": "Nasheeds for you",
+    "tracks": ["Africa.mp3", "Focus.mp3" , "I-Rise.mp3", "Muad.mp3"]
+  },
+  "halal_beats": {
+    "title": "Akhi Nasheeds",
+    "cover": "songs/halal_beats/cover.jpg",
+    "description": "Brotherhood-inspired nasheeds ",
+    "tracks": ["Akhi.mp3", "Alone.mp3"]
+  },
+  "heart": {
+    "title": "Healing Nasheeds",
+    "cover": "songs/heart/cover.jpg",
+    "description": "Heal yourself ",
+    "tracks": ["1Ya Quluban.mp3", "Alone.mp3"]
+  },
+
+  "lift": {
+   
+    "title": "Spiritual Nasheeds",
+    "cover": "songs/lift/cover.jpg",
+    "description": "Soul, faith,serenity ",
+    "tracks": ["Allah Humma Salli Ala.mp3", "Ya Quluban.mp3"]
+  },
+
+  "Nasheeds": {
+   "title": "Heart Melting ",
+   "cover": "songs/Nasheeds/cover.jpg",
+   "description": "Tears of reflection strengthen bond with Allah",
+   "tracks": ["1Wohi Khuda Hai.mp3", "Ar-Rahman.mp3" , "Catch Me When I Fall.mp3", "Ya Nabi salam.mp3"]
+  },
+
+  "ncs": {
+    
+     "title": "Wedding Nasheeds",
+     "cover": "songs/ncs/cover.jpg",
+    "description": "Wedding Nasheeds for you",
+    "tracks": ["Wedding Nasheed.mp3"]
+  },
+
+  "strangers": {
+    "title": "Muslims Cover",
+    "cover": "songs/strangers/cover.jpg",
+    "description": "Struggles of life, offering solace, hope",
+    "tracks": ["1WHERE IS THE LOVE.mp3", "Traveller.mp3"]
+  },
+
+
+  "Sukoon": {
+    "title": "Refreshing Nasheeds",
+    "cover": "songs/Sukoon/cover.jpg",
+    "description": "Bring peace to the mind",
+    "tracks": ["Maher Zain & Atif I m Alive.mp3", "Siedd World On Fire.mp3"]
+  },
+
+
+  "wedding": {
+    "title": "Gratitude Nasheeds",
+    "cover": "songs/wedding/cover.jpg",
+    "description": "Allah's countless blessings.",
+    "tracks": ["1-Mustaffa.mp3", "Loyalty.mp3"]
+  }
+}
