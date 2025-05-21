@@ -2,6 +2,7 @@ let currentSong = new Audio();
 let albums = {};
 let currentFolder = '';
 let trackList = [];
+let currentTrackIndex = 0;
 
 function formatTime(sec) {
   const m = Math.floor(sec / 60).toString().padStart(2, '0');
@@ -53,10 +54,12 @@ function renderTrackList() {
 }
 
 function playTrack(idx, pause = false) {
+  currentTrackIndex = idx;
   const file = trackList[idx];
   currentSong.src = `songs/${currentFolder}/${file}`;
   if (!pause) currentSong.play();
   document.querySelector('.songinfo').textContent = file.replaceAll("%20", " ");
+  updatePlayPauseButton();
 }
 
 async function loadAlbum(folder) {
@@ -73,11 +76,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('play').addEventListener('click', () => {
     if (currentSong.paused) {
       currentSong.play();
-      document.getElementById('play').src = 'img/pause.svg';
     } else {
       currentSong.pause();
-      document.getElementById('play').src = 'img/play.svg';
     }
+    updatePlayPauseButton();
   });
 
   currentSong.addEventListener('timeupdate', () => {
@@ -86,27 +88,63 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('.circle').style.left = (currentSong.currentTime / currentSong.duration) * 100 + '%';
   });
 
+  currentSong.addEventListener('play', updatePlayPauseButton);
+  currentSong.addEventListener('pause', updatePlayPauseButton);
+
   document.querySelector('.seekbar').addEventListener('click', e => {
     const pct = e.offsetX / e.currentTarget.clientWidth;
     currentSong.currentTime = currentSong.duration * pct;
   });
 
   document.getElementById('previous').addEventListener('click', () => {
-    const idx = trackList.indexOf(currentSong.src.split('/').pop());
-    if (idx > 0) playTrack(idx - 1);
+    if (currentTrackIndex > 0) {
+      playTrack(currentTrackIndex - 1);
+    }
   });
+
   document.getElementById('next').addEventListener('click', () => {
-    const idx = trackList.indexOf(currentSong.src.split('/').pop());
-    if (idx < trackList.length - 1) playTrack(idx + 1);
+    if (currentTrackIndex < trackList.length - 1) {
+      playTrack(currentTrackIndex + 1);
+    }
   });
 
   document.querySelector('.range input').addEventListener('input', e => {
     currentSong.volume = e.target.value / 100;
-    document.querySelector('.volume img').src =
-      currentSong.volume > 0 ? 'img/volume.svg' : 'img/mute.svg';
+    updateVolumeIcon();
+  });
+
+  document.querySelector('.volume img').addEventListener('click', () => {
+    toggleMute();
   });
 });
 
+function updatePlayPauseButton() {
+  const playButton = document.getElementById('play');
+  if (currentSong.paused) {
+    playButton.src = 'img/play.svg';
+  } else {
+    playButton.src = 'img/pause.svg';
+  }
+}
+
+function updateVolumeIcon() {
+  const volumeIcon = document.querySelector('.volume img');
+  if (currentSong.volume > 0) {
+    volumeIcon.src = 'img/volume.svg';
+  } else {
+    volumeIcon.src = 'img/mute.svg';
+  }
+}
+
+function toggleMute() {
+  if (currentSong.volume > 0) {
+    currentSong.volume = 0;
+  } else {
+    currentSong.volume = 0.7; // You can set this to any default volume level
+  }
+  document.querySelector('.range input').value = currentSong.volume * 100;
+  updateVolumeIcon();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const hamburger = document.querySelector('.hamburger');
@@ -123,3 +161,4 @@ document.addEventListener('DOMContentLoaded', () => {
     leftMenu.classList.remove('open');
   });
 });
+
