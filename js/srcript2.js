@@ -2,12 +2,11 @@ let currentSong = new Audio();
 let albums = {};
 let currentFolder = '';
 let trackList = [];
-let currentTrackIndex = 0;
 
 function formatTime(sec) {
-  const minutes = Math.floor(sec / 60).toString().padStart(2, '0');
-  const seconds = Math.floor(sec % 60).toString().padStart(2, '0');
-  return `${minutes}:${seconds}`;
+  const m = Math.floor(sec / 60).toString().padStart(2, '0');
+  const s = Math.floor(sec % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
 }
 
 async function displayAlbums() {
@@ -37,63 +36,90 @@ function renderTrackList() {
   trackList.forEach((file, idx) => {
     ul.innerHTML += `
       <li data-idx="${idx}">
-        <img class="invert" src="img/music.svg" alt="Track">
+        <img class="invert" src="img/music.svg" alt="">
         <div class="info">
           <div>${decodeURIComponent(file)}</div>
-          <div>${albums[currentFolder].title}</div>
+          <div>Artist Name</div>
         </div>
         <div class="playnow">
           <span>Play now</span>
-          <img class="invert" src="img/play.svg" alt="Play">
+          <img class="invert" src="img/play.svg" alt="">
         </div>
       </li>`;
   });
-
   ul.querySelectorAll('li').forEach(li =>
     li.addEventListener('click', () => playTrack(Number(li.dataset.idx)))
   );
 }
 
-function playTrack(idx) {
-  currentTrackIndex = idx;
+function playTrack(idx, pause = false) {
   const file = trackList[idx];
   currentSong.src = `songs/${currentFolder}/${file}`;
-  currentSong.play();
-  document.querySelector('.songinfo').textContent = file;
-  document.getElementById('play').src = 'img/pause.svg';
+  if (!pause) currentSong.play();
+  document.querySelector('.songinfo').textContent = file.replaceAll("%20", " ");
 }
 
 async function loadAlbum(folder) {
   currentFolder = folder;
   trackList = albums[folder].tracks;
   renderTrackList();
-  playTrack(0); // Auto-play first track
-}
-
-function togglePlayPause() {
-  if (currentSong.paused) {
-    currentSong.play();
-    document.getElementById('play').src = 'img/pause.svg';
-  } else {
-    currentSong.pause();
-    document.getElementById('play').src = 'img/play.svg';
-  }
-}
-
-function playNext() {
-  currentTrackIndex = (currentTrackIndex + 1) % trackList.length;
-  playTrack(currentTrackIndex);
-}
-
-function playPrevious() {
-  currentTrackIndex = (currentTrackIndex - 1 + trackList.length) % trackList.length;
-  playTrack(currentTrackIndex);
+  playTrack(0, false); // Play first song immediately
 }
 
 // Event listeners
-document.getElementById('play').addEventListener('click', togglePlayPause);
-document.getElementById('next').addEventListener('click', playNext);
-document.getElementById('previous').addEventListener('click', playPrevious);
+document.addEventListener('DOMContentLoaded', async () => {
+  await displayAlbums();
 
-// Load albums on page load
-document.addEventListener('DOMContentLoaded', displayAlbums);
+  document.getElementById('play').addEventListener('click', () => {
+    if (currentSong.paused) {
+      currentSong.play();
+      document.getElementById('play').src = 'img/pause.svg';
+    } else {
+      currentSong.pause();
+      document.getElementById('play').src = 'img/play.svg';
+    }
+  });
+
+  currentSong.addEventListener('timeupdate', () => {
+    document.querySelector('.songtime').textContent =
+      `${formatTime(currentSong.currentTime)} / ${formatTime(currentSong.duration || 0)}`;
+    document.querySelector('.circle').style.left = (currentSong.currentTime / currentSong.duration) * 100 + '%';
+  });
+
+  document.querySelector('.seekbar').addEventListener('click', e => {
+    const pct = e.offsetX / e.currentTarget.clientWidth;
+    currentSong.currentTime = currentSong.duration * pct;
+  });
+
+  document.getElementById('previous').addEventListener('click', () => {
+    const idx = trackList.indexOf(currentSong.src.split('/').pop());
+    if (idx > 0) playTrack(idx - 1);
+  });
+  document.getElementById('next').addEventListener('click', () => {
+    const idx = trackList.indexOf(currentSong.src.split('/').pop());
+    if (idx < trackList.length - 1) playTrack(idx + 1);
+  });
+
+  document.querySelector('.range input').addEventListener('input', e => {
+    currentSong.volume = e.target.value / 100;
+    document.querySelector('.volume img').src =
+      currentSong.volume > 0 ? 'img/volume.svg' : 'img/mute.svg';
+  });
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const hamburger = document.querySelector('.hamburger');
+  const closeBtn = document.querySelector('.close');
+  const leftMenu = document.querySelector('.left');
+
+  // Open menu
+  hamburger.addEventListener('click', () => {
+    leftMenu.classList.add('open');
+  });
+
+  // Close menu
+  closeBtn.addEventListener('click', () => {
+    leftMenu.classList.remove('open');
+  });
+});
